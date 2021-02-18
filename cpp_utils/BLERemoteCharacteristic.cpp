@@ -425,7 +425,10 @@ std::string BLERemoteCharacteristic::readValue() {
 		ESP_LOGE(LOG_TAG, "esp_ble_gattc_read_char: rc=%d %s", errRc, GeneralUtils::errorToString(errRc));
 		return "";
 	}
-
+	
+	//patch solution found on https://esp32.com/viewtopic.php?t=4181
+	m_semaphoreReadCharEvt.give();
+	
 	// Block waiting for the event that indicates that the read has completed.  When it has, the std::string found
 	// in m_value will contain our data.
 	m_semaphoreReadCharEvt.wait("readValue");
